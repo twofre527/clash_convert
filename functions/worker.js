@@ -1,3 +1,20 @@
+export async function onRequest(context) {
+  // If the request method is OPTIONS, this is a preflight request
+  if (context.request.method === 'OPTIONS') {
+    return new Response(null, {
+      status: 204, // 204 No Content is standard for successful preflights
+      headers: {
+        'Access-Control-Allow-Origin': '*', // Or your specific frontend domain
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Headers': context.request.headers.get('Access-Control-Request-Headers') || 'Content-Type',
+      },
+    });
+  }
+
+  // If it's not OPTIONS, let the request proceed to the method-specific handlers (like onRequestPost)
+  return context.next();
+}
+
 // UTF-8安全的Base64编码函数
 function utf8ToBase64(str) {
   // 将字符串转换为UTF-8字节，然后进行Base64编码
@@ -33,9 +50,35 @@ function generateShortId() {
 // 存储配置内容的对象 (内存缓存)
 const configCache = {};
 
-addEventListener('fetch', event => {
-  event.respondWith(handleRequest(event.request))
-})
+// addEventListener('fetch', event => {
+//   event.respondWith(handleRequest(event.request))
+// })
+
+// This function only handles POST requests to /convert
+export async function onRequestPost({ request }) {
+  try {
+    // // 1. Get the POST data
+    // const data = await request.json(); 
+    
+    // // 2. Your core conversion logic goes here
+    // const convertedConfig = await runClashConversion(data);
+
+    // // 3. Return a successful response
+    // return new Response(convertedConfig, {
+    //   headers: { 
+    //     'Content-Type': 'text/plain', // Or 'application/json' 
+    //     'Access-Control-Allow-Origin': '*' // Essential if your frontend is served from a different origin
+    //   },
+    //   status: 200,
+    // });
+
+    return handleRequest(request);
+
+  } catch (error) {
+    console.error("Conversion error:", error);
+    return new Response("Error: Invalid Request or Internal Server Error", { status: 500 });
+  }
+}
 
 async function handleRequest(request) {
   const url = new URL(request.url)
