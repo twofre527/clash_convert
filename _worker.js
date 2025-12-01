@@ -36,13 +36,14 @@ const configCache = {};
 // addEventListener('fetch', event => {
 //   event.respondWith(handleRequest(event.request))
 // })
-
-export async function onRequest(context) {
-  try {
-    return handleRequest(context.request);
-  } catch (error) {
-    console.error("Conversion error:", error);
-    return new Response("Error: Invalid Request or Internal Server Error", { status: 500 });
+export default {
+  async fetch(request, env, ctx) {
+    try {
+      return handleRequest(request);
+    } catch (error) {
+      console.error("Conversion error:", error);
+      return new Response("Error: Invalid Request or Internal Server Error", { status: 500 });
+    }
   }
 }
 
