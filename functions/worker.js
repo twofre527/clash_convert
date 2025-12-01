@@ -38,19 +38,6 @@ const configCache = {};
 // })
 
 export async function onRequest(context) {
-  // If the request method is OPTIONS, this is a preflight request
-  if (context.request.method === 'OPTIONS') {
-    return new Response(null, {
-      status: 204, // 204 No Content is standard for successful preflights
-      headers: {
-        'Access-Control-Allow-Origin': '*', // Or your specific frontend domain
-        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-        'Access-Control-Allow-Headers': context.request.headers.get('Access-Control-Request-Headers') || 'Content-Type',
-      },
-    });
-  }
-
-  // If it's not OPTIONS, let the request proceed to the method-specific handlers (like onRequestPost)
   try {
     return handleRequest(context.request);
   } catch (error) {
